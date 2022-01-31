@@ -1,0 +1,356 @@
+﻿<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>北京冬奥会欢迎您</title>
+    <script src="/static/js/jquery-2.1.4.min.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <script src="/static/js/bootstrap-switch.js"></script>
+    <link href="/static/css/bootstrap-switch.css" rel="stylesheet">
+    <script src="/static/js/echarts.min.js"></script>
+    <script src="/static/js/china.js"></script>
+    <script src="/static/js/world.js"></script>
+    <script src="/static/js/bmap.min.js"></script>
+    <script src="/static/js/mqtt.min.js"></script>
+    <script src="/static/js/flexible.js"></script>
+    <style>
+      .music_bar, .music_barl, .music_barr{
+        margin: 0px;
+        padding: 0px;
+        width: 1%;
+        height: 4px;
+        border-width: 1px;
+        border-left-width: 0px;
+        border-right-width: 0px;
+        border-style: solid;
+        border-image: initial;
+        border-style: outset;
+        border-color: black;
+        background-color: lightgray;
+        font-size: 0px;
+      }
+      .music_barl{
+        border-left-width: 1px;
+      }
+      .music_barr{
+        border-right-width: 1px;
+      }
+      .pause, ._play {
+        margin: 0px;
+        padding: 0px;
+        width: 0px;
+        height: 0px;
+        border-width: 0px;
+        font-size: 0px;
+      }
+      .play, ._pause, .play_button {
+        border-radius: 50%;
+        height: 34px;
+        width: 34px;
+        border-color: black;
+        font-size: 18px;
+        padding: 1px;
+      }
+      ._music_button, .disabled_music_button{
+        height: 34px;
+        width: 22px;
+        background-color:transparent;
+        border-width: 0px;
+        font-size: 18px;
+        font-weight: bold;
+        padding: 0px;
+        margin-left: 10px;
+        margin-right: 10px;
+      }
+      .disabled_music_button {
+        font-size: 0px;
+        color: transparent;
+      }
+      .music_bar_cur {
+        margin: 0px;
+        margin-bottom: -9px;
+        padding: 0px;
+        width: 14px;
+        height: 14px;
+        border-width: 1.5px;
+        border-style: solid;
+        border-image: initial;
+        border-style: outset;
+        border-color: black;
+        background-color: white;
+        font-size: 0px;
+        border-radius: 50%;
+        position: relative;
+        top: -9px;
+        left: {{pos}};
+      }
+      .music_names {
+        background-color:transparent;
+        border-width: 0px;
+        font-size: 18px;
+        padding: 0px;
+        margin-left: 10px;
+      }
+      .music_table{
+        float: left;
+        min-width: 100%;
+        border-style: solid;
+        border-width: 1px;
+        border-color: black;
+      }
+      .song_name{
+        height: 32px;
+        font-size: 20px;
+        margin: 5px;
+      }
+      .clyric{
+        height: 35px;
+        font-size: 24px;
+        font-weight: bold;
+        margin: 8px;
+      }
+      .nlyric{
+        height: 30px;
+        font-size: 18px;
+        color: gray;
+        margin: 5px;
+      }
+      .span_time{
+        float: right;
+        margin: 0px;
+      }
+      p{
+        margin: 0px;
+      }
+    </style>
+    <meta http-equiv="refresh" content="{{next_fresh}}0">
+  </head>
+  <body>
+    <div  class= "navbar navbar-default">
+      <div class="container-fluid" >
+        <div class="navbar-header" >
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" aria-expanded="false"  data-target= "#navContent">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/index.html">  首页
+        </a>
+        </div>
+        <div class="collapse navbar-collapse"  id= "navContent">
+          <ul class="nav navbar-nav " >
+            <li role="presentation" class="  " >
+                <a href="/intro.html">场馆介绍</a>
+            </li>
+            <li class="dropdown" >
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">交互系统 <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+              <li><a href="/interact/light.html">奥运村灯光交互</a></li>
+              <li><a href="/interact/jianlu.html">运动员比赛检录系统</a></li>
+              <li><a href="/interact/music.html">一起向未来！</a></li>
+              <li><a href="/interact/hesuan.html">疫情防控管理系统</a></li>
+              <li><a href="/interact/car.html">安全巡逻车位置</a></li>
+              <li role="separator" class="divider"></li>
+            </ul>
+            </li>
+          </ul>
+          <form class="navbar-form navbar-left">
+          <div class="form-group" >
+                <input type="text" class= "form-control" placeholder= "search" />
+          </div>
+              <input type="submit" value="搜索" class= "btn btn-default" />
+          </form>
+        </div>
+      </div>
+    </div>
+  </body>
+  <p style="margin-left: 5%;">
+    <em><ins>一起向未来！ 音乐播放系统</ins></em>
+  </p>
+  <center style="width: 70%;">
+    <p style="margin-bottom: 10px; margin-top: 10px;">歌曲列表</p>
+  </center>
+  <div style="height: 350px; width: 100%; margin-bottom: 20px;">
+    <div style="overflow: auto; max-height: 350px; width: 60%; float: left; margin-left: 5%; margin-right: 5%;">
+      <form method="post">
+        <table class="music_table" rules="rows" frame="border">
+<tr><td><input class="music_names" type="submit" name="song" value="Song A"></td></tr>
+{{music_list}}
+        </table>
+      </form>
+    </div>
+    <div style="overflow-y: hidden; overflow-x: auto; height: 350px; width: 25%; float: left;">
+      <center>
+        <p class="song_name"> {{song_name}} </p>
+        <br class="clyric" />
+        <p class="clyric"> {{lyric0}} </p>
+        <p class="nlyric"> {{lyric1}} </p>
+        <p class="nlyric"> {{lyric2}} </p>
+        <p class="nlyric"> {{lyric3}} </p>
+        <p class="nlyric"> {{lyric4}} </p>
+        <p class="nlyric"> {{lyric5}} </p>
+        <p class="nlyric"> {{lyric6}} </p>
+      </center>
+    </div>
+  </div>
+  <center>
+    <table style="width: 90%; margin:0 auto;">
+      <tr align="middle">
+        <td style="padding: 5px; width: 170px;" rowspan=2 align="left">
+          <form method="post" style="font-size: 0px; text-align: center;">
+            <input class="play_button" type="submit" name="stop" style="font-family: simsun, serif; font-size: 15px;" value="█">
+            <input class="{{slow}}_music_button" {{slow}} type="submit" name="slower" value="<<">
+            <input class="{{isplay}}play" type="submit" name="play" style="font-size: 20px;" value="▶">
+            <input class="{{isplay}}pause" type="submit" name="pause" style="transform:rotate(90deg); padding-bottom: 0px;" value="〓" >
+            <input class="{{fast}}_music_button" {{fast}} type="submit" name="faster" value=">>">
+          </form>
+        </td>
+        <td style="padding: 5px;" align="left"> {{times}}x </td>
+        <td style="padding: 5px;" align="right">
+          <span class="span_time" id="ttime_s">{{ttime_s}}</span>
+          <span class="span_time">:</span>
+          <span class="span_time" id="ttime_m">{{ttime_m}}</span>
+          <span class="span_time">&nbsp;/&nbsp;</span>
+          <span class="span_time" id="ctime_s">{{ctime_s}}</span>
+          <span class="span_time">:</span>
+          <span class="span_time" id="ctime_m">{{ctime_m}}</span>
+      </tr>
+      <tr>
+        <td style="padding: 5px" colspan=2>
+          <form method="post" style="font-size: 0px;width: 100%;">
+            <input class="music_barl" type="submit" name="time00" value="">
+            <input class="music_bar" type="submit" name="time01" value="">
+            <input class="music_bar" type="submit" name="time02" value="">
+            <input class="music_bar" type="submit" name="time03" value="">
+            <input class="music_bar" type="submit" name="time04" value="">
+            <input class="music_bar" type="submit" name="time05" value="">
+            <input class="music_bar" type="submit" name="time06" value="">
+            <input class="music_bar" type="submit" name="time07" value="">
+            <input class="music_bar" type="submit" name="time08" value="">
+            <input class="music_bar" type="submit" name="time09" value="">
+            <input class="music_bar" type="submit" name="time10" value="">
+            <input class="music_bar" type="submit" name="time11" value="">
+            <input class="music_bar" type="submit" name="time12" value="">
+            <input class="music_bar" type="submit" name="time13" value="">
+            <input class="music_bar" type="submit" name="time14" value="">
+            <input class="music_bar" type="submit" name="time15" value="">
+            <input class="music_bar" type="submit" name="time16" value="">
+            <input class="music_bar" type="submit" name="time17" value="">
+            <input class="music_bar" type="submit" name="time18" value="">
+            <input class="music_bar" type="submit" name="time19" value="">
+            <input class="music_bar" type="submit" name="time20" value="">
+            <input class="music_bar" type="submit" name="time21" value="">
+            <input class="music_bar" type="submit" name="time22" value="">
+            <input class="music_bar" type="submit" name="time23" value="">
+            <input class="music_bar" type="submit" name="time24" value="">
+            <input class="music_bar" type="submit" name="time25" value="">
+            <input class="music_bar" type="submit" name="time26" value="">
+            <input class="music_bar" type="submit" name="time27" value="">
+            <input class="music_bar" type="submit" name="time28" value="">
+            <input class="music_bar" type="submit" name="time29" value="">
+            <input class="music_bar" type="submit" name="time30" value="">
+            <input class="music_bar" type="submit" name="time31" value="">
+            <input class="music_bar" type="submit" name="time32" value="">
+            <input class="music_bar" type="submit" name="time33" value="">
+            <input class="music_bar" type="submit" name="time34" value="">
+            <input class="music_bar" type="submit" name="time35" value="">
+            <input class="music_bar" type="submit" name="time36" value="">
+            <input class="music_bar" type="submit" name="time37" value="">
+            <input class="music_bar" type="submit" name="time38" value="">
+            <input class="music_bar" type="submit" name="time39" value="">
+            <input class="music_bar" type="submit" name="time40" value="">
+            <input class="music_bar" type="submit" name="time41" value="">
+            <input class="music_bar" type="submit" name="time42" value="">
+            <input class="music_bar" type="submit" name="time43" value="">
+            <input class="music_bar" type="submit" name="time44" value="">
+            <input class="music_bar" type="submit" name="time45" value="">
+            <input class="music_bar" type="submit" name="time46" value="">
+            <input class="music_bar" type="submit" name="time47" value="">
+            <input class="music_bar" type="submit" name="time48" value="">
+            <input class="music_bar" type="submit" name="time49" value="">
+            <input class="music_bar" type="submit" name="time50" value="">
+            <input class="music_bar" type="submit" name="time51" value="">
+            <input class="music_bar" type="submit" name="time52" value="">
+            <input class="music_bar" type="submit" name="time53" value="">
+            <input class="music_bar" type="submit" name="time54" value="">
+            <input class="music_bar" type="submit" name="time55" value="">
+            <input class="music_bar" type="submit" name="time56" value="">
+            <input class="music_bar" type="submit" name="time57" value="">
+            <input class="music_bar" type="submit" name="time58" value="">
+            <input class="music_bar" type="submit" name="time59" value="">
+            <input class="music_bar" type="submit" name="time60" value="">
+            <input class="music_bar" type="submit" name="time61" value="">
+            <input class="music_bar" type="submit" name="time62" value="">
+            <input class="music_bar" type="submit" name="time63" value="">
+            <input class="music_bar" type="submit" name="time64" value="">
+            <input class="music_bar" type="submit" name="time65" value="">
+            <input class="music_bar" type="submit" name="time66" value="">
+            <input class="music_bar" type="submit" name="time67" value="">
+            <input class="music_bar" type="submit" name="time68" value="">
+            <input class="music_bar" type="submit" name="time69" value="">
+            <input class="music_bar" type="submit" name="time70" value="">
+            <input class="music_bar" type="submit" name="time71" value="">
+            <input class="music_bar" type="submit" name="time72" value="">
+            <input class="music_bar" type="submit" name="time73" value="">
+            <input class="music_bar" type="submit" name="time74" value="">
+            <input class="music_bar" type="submit" name="time75" value="">
+            <input class="music_bar" type="submit" name="time76" value="">
+            <input class="music_bar" type="submit" name="time77" value="">
+            <input class="music_bar" type="submit" name="time78" value="">
+            <input class="music_bar" type="submit" name="time79" value="">
+            <input class="music_bar" type="submit" name="time80" value="">
+            <input class="music_bar" type="submit" name="time81" value="">
+            <input class="music_bar" type="submit" name="time82" value="">
+            <input class="music_bar" type="submit" name="time83" value="">
+            <input class="music_bar" type="submit" name="time84" value="">
+            <input class="music_bar" type="submit" name="time85" value="">
+            <input class="music_bar" type="submit" name="time86" value="">
+            <input class="music_bar" type="submit" name="time87" value="">
+            <input class="music_bar" type="submit" name="time88" value="">
+            <input class="music_bar" type="submit" name="time89" value="">
+            <input class="music_bar" type="submit" name="time90" value="">
+            <input class="music_bar" type="submit" name="time91" value="">
+            <input class="music_bar" type="submit" name="time92" value="">
+            <input class="music_bar" type="submit" name="time93" value="">
+            <input class="music_bar" type="submit" name="time94" value="">
+            <input class="music_bar" type="submit" name="time95" value="">
+            <input class="music_bar" type="submit" name="time96" value="">
+            <input class="music_bar" type="submit" name="time97" value="">
+            <input class="music_bar" type="submit" name="time98" value="">
+            <input class="music_barr" type="submit" name="time99" value="">
+          </form>
+          <div class="music_bar_cur" id="music_circ"/>
+        </td>
+      </tr>
+    </table>
+  </center>
+  <script language="JavaScript">
+    var csn = {{ctime_s}};
+    var cmn = {{ctime_m}};
+    var cs = document.getElementById('ctime_s');
+    var cm = document.getElementById('ctime_m');
+    var mc = document.getElementById('music_circ').style;
+    var t = 0;
+    function addt(){
+      if(cmn*60+csn >= {{ttime_m}}*60+{{ttime_s}}) return;
+      setTimeout(addt, 1000);
+      t = (cmn*60+csn) * 100 / ({{ttime_m}}*60+{{ttime_s}})
+      if(csn >= 59){
+        csn = 0;
+        cmn += 1;
+        cs.innerText = '00';
+        cm.innerText = (cmn < 10)?`0${cmn}`:`${cmn}`;
+      }else{
+        csn += 1;
+        cs.innerText = (csn < 10)?`0${csn}`:`${csn}`;
+      }
+      mc.left = `${t}%`
+      //console.log(mc.left, `${t}%`)
+    }
+    setTimeout(addt, 1000);
+    //setTimeout(function(){location.reload()}, {{next_fresh}}*1000);
+  </script>
+</html>
